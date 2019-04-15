@@ -1,0 +1,26 @@
+下载74版本 chrome
+https://dl.google.com/tag/s/appguid%3D%7B8237E44A-0054-442C-B6B6-EA0509993955%7D%26iid%3D%7B49EE44E8-8B41-1A04-4634-39B5AA79389C%7D%26lang%3Dzh-CN%26browser%3D5%26usagestats%3D1%26appname%3DGoogle%2520Chrome%2520Beta%26needsadmin%3Dprefers%26ap%3D-arch_x64-statsdef_1%26installdataindex%3Dempty/update2/installers/ChromeSetup.exe
+
+安装python3.6
+https://www.python.org/ftp/python/3.7.3/python-3.7.3.exe
+
+安装selenium
+pip install selenium
+
+
+
+============================================================================================
+
+python手册
+http://www.runoob.com/python3/python3-dictionary.html
+
+python-selenium手册
+https://selenium-python-zh.readthedocs.io/en/latest/waits.html
+
+Python爬虫利器五之Selenium的用法
+https://cuiqingcai.com/2599.html
+
+github使用教程
+http://www.runoob.com/w3cnote/git-guide.html
+github简明手册
+http://rogerdudler.github.io/git-guide/index.zh.html
