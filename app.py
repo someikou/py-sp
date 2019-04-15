@@ -3,6 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from bs4 import BeautifulSoup
 
 opts = webdriver.ChromeOptions()
 opts.binary_location = 'C:\\Program Files (x86)\\Google\Chrome Beta\\Application\\chrome.exe'
@@ -27,8 +28,10 @@ element = WebDriverWait(driver, 10).until(
     EC.presence_of_element_located((By.ID, "sitem"))
 )
 driver.get(data['item'])
-codebox = driver.find_element_by_id('codebox')
-print(codebox.get_attribute('value'))
+codebox = driver.find_element_by_id('codebox').get_attribute('value')
+print(codebox)
+
+soup = BeautifulSoup(codebox,'lxml')
 
 
 
