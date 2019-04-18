@@ -5,17 +5,22 @@ https://dl.google.com/tag/s/appguid%3D%7B8237E44A-0054-442C-B6B6-EA0509993955%7D
 https://www.python.org/ftp/python/3.7.3/python-3.7.3.exe
 
 安装selenium
-pip install selenium
+pip3 install selenium
 
 安装beautifulsoup html解析插件
-pip install beautifulsoup4
+pip3 install beautifulsoup4
 安装解析器
-pip install lxml
+pip3 install lxml
 文档
 https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.zh.html
 
 Python爬虫防封杀方法集合
 https://blog.csdn.net/mrlevo520/article/details/52397305
+
+mac err
+selenium.common.exceptions.WebDriverException: Message: 'chromedriver' executable needs to be in PATH.
+办法brew cask install chromedriver
+
 
 ============================================================================================
 

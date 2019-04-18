@@ -7,9 +7,10 @@ from utils.parseUtil import *
 import re
 from urllib.parse import urlparse,unquote
 
-opts = webdriver.ChromeOptions()
-opts.binary_location = 'C:\\Program Files (x86)\\Google\Chrome Beta\\Application\\chrome.exe'
-driver = webdriver.Chrome(chrome_options = opts)
+# opts = webdriver.ChromeOptions()
+# opts.binary_location = 'C:\\Program Files (x86)\\Google\Chrome Beta\\Application\\chrome.exe'
+# driver = webdriver.Chrome(chrome_options = opts)
+driver = webdriver.Chrome()
 driver.implicitly_wait(10)
 driver.set_window_size(360, 800)
 
