@@ -6,11 +6,16 @@ from selenium.webdriver.support import expected_conditions as EC
 from utils.parseUtil import *
 import re
 from urllib.parse import urlparse,unquote
+import time
+import random
+from utils.dbUtil import *
 
-# opts = webdriver.ChromeOptions()
-# opts.binary_location = 'C:\\Program Files (x86)\\Google\Chrome Beta\\Application\\chrome.exe'
-# driver = webdriver.Chrome(chrome_options = opts)
-driver = webdriver.Chrome()
+
+opts = webdriver.ChromeOptions()
+opts.binary_location = 'C:\\Program Files (x86)\\Google\Chrome Beta\\Application\\chrome.exe'
+opts.add_argument('headless') # 静默模式
+driver = webdriver.Chrome(chrome_options = opts)
+# driver = webdriver.Chrome()
 driver.implicitly_wait(10)
 driver.set_window_size(360, 800)
 
@@ -21,6 +26,8 @@ testData = {
     'itemList':'',
     'item':''
 }
+
+db = dbUtil('./utils/afl.db')
 
 def login ():
     driver.get(testData['loginUrl'])
@@ -57,7 +64,10 @@ def jumpToItemList () :
         targetList.append(data)
 
     for target in targetList:
+        time.sleep(random.randint(1,5))
         jumpToItemPage(target)
+    
+    db.close()
 
 def jumpToItemPage(target):
     # driver.get(testData['item'])
@@ -66,6 +76,8 @@ def jumpToItemPage(target):
     data = parseCodeBox(codebox)
     target['titleUrl'] = data['titleUrl']
     target['btnUrl'] = data['btnUrl']
+    target['imgAflUrl'] = data['imgAflUrl']
+    target['imgShowAflUrl'] = data['imgShowAflUrl']
     imgContainer = driver.find_element_by_id('alt_imgs_container')
     imgList = imgContainer.find_elements_by_class_name('p-1')
     imgUrlList = []
@@ -75,17 +87,35 @@ def jumpToItemPage(target):
     # target['shopName'] = driver.find_element_by_id('shop_name').text
     target['shopUrl'] = driver.find_element_by_id('jump_url').get_attribute('href')
     target['shopMsg'] = driver.find_element_by_id('shop_blurb').text
-    print(target['itemId'])
-    print(target['title'])
-    print(target['price'])
-    print(target['shopName'])
-    print(target['itemSaleUrl'])
-    print(target['titleUrl'])
-    print(target['btnUrl'])
-    print(target['imgUrlList'][0])
-    print(target['shopName'])
-    print(target['shopUrl'])
-    print(target['shopMsg'])
+    item4Add = [
+        db.getNewId(),
+        target['itemId'],
+        target['title'],
+        target['price'],
+        target['itemSaleUrl'],
+        target['titleUrl'],
+        target['btnUrl'],
+        target['imgAflUrl'],
+        target['imgShowAflUrl'],
+        target['imgUrlList'][0],
+        len(target['imgUrlList']),
+        target['shopName'],
+        target['shopUrl'],
+        target['shopMsg'],
+        time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+        0,
+    ]
+    db.add(item4Add)
+    # print(target['itemId'])
+    # print(target['title'])
+    # print(target['price'])
+    # print(target['itemSaleUrl'])
+    # print(target['titleUrl'])
+    # print(target['btnUrl'])
+    # print(target['imgUrlList'][0])
+    # print(target['shopName'])
+    # print(target['shopUrl'])
+    # print(target['shopMsg'])
 
 login()
 # jumpToItemPage()
