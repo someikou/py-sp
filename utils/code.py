@@ -1,0 +1,5 @@
+LOGIN_URL = 'https://grp02.id.rakuten.co.jp/rms/nid/vc?__event=login&service_id=p11'
+USER = 'kousomei@yahoo.cn'
+PASSWORD = '5917364'
+ITEM_LIST = 'https://affiliate.rakuten.co.jp/search/?g=100371&gl=2&v=2&s=1'
+DB_PATH = './utils/afl.db'

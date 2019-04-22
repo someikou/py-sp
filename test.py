@@ -1,5 +1,6 @@
 from utils.parseUtil import *
 from utils.dbUtil import *
+import platform
 # codebox = open('codebox.html', mode='r', encoding='UTF-8')
 # data = parseCodeBox(codebox)
 # data['aaa'] = 'bbb'
@@ -8,4 +9,6 @@ from utils.dbUtil import *
 
 
 db = dbUtil('./utils/afl.db')
-db.getTaskUrl()
+db.endTask(2,'seikoi2')
+
+# print(platform.system())

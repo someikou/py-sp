@@ -31,6 +31,13 @@ class dbUtil:
         result = self.cursor.execute('select count(*)+1 from items').fetchall()[0][0]
         return result
 
+    def isSonzai(self,itemId):
+        checkSql = "select id from items where item_id = '"+str(itemId)+"'"
+        result = self.cursor.execute(checkSql).fetchall()
+        if len(result) >= 1:
+            return True
+        return False
+
     def addItem(self,data):
         checkSql = "select id from items where item_id = '"+str(data[0])+"'"
         addSql = 'insert into items values ((select count(*)+1 from items),?,?,?,?,?,?,?,?,?,?,?,?,?)'
@@ -63,12 +70,12 @@ class dbUtil:
         self.conn.commit()
         return result
 
-    def endTask(self,id,biko):
+    def endTask(self,targetId,biko):
         prams = [
             biko,
             time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-            id,
+            targetId,
         ]
         unLockSql = 'update queue set lock_flg = 0, biko = ? , upd_time = ? where id = ?'
-        self.cursor.execute(unLockSql, prams).fetchall()
+        result = self.cursor.execute(unLockSql, prams).fetchall()
         self.conn.commit()

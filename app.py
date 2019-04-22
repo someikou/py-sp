@@ -4,37 +4,26 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from utils.parseUtil import *
+from utils.code import *
+from utils.webDriverUtil import *
 import re
 from urllib.parse import urlparse, unquote
 import time
 import random
 from utils.dbUtil import *
 
+
 class app:
     def __init__(self):
-        self.opts = webdriver.ChromeOptions()
-        self.opts.binary_location = 'C:\\Program Files (x86)\\Google\Chrome Beta\\Application\\chrome.exe'
-        self.opts.add_argument('headless')  # 静默模式
-        self.driver = webdriver.Chrome(chrome_options=self.opts)
-        # self.driver = webdriver.Chrome()
-        self.driver.implicitly_wait(10)
-        self.driver.set_window_size(360, 800)
-        self.testData = {
-            'loginUrl': '',
-            'username': '',
-            'password': '',
-            'itemList': '',
-            'item': ''
-        }
-        time.sleep(random.randint(1, 5))
-        self.db = dbUtil('./utils/afl.db')
+        self.driver = webDriverUtil.createWebDriver()
+        self.db = dbUtil(DB_PATH)
 
     def login(self):
-        self.driver.get(self.testData['loginUrl'])
+        self.driver.get(LOGIN_URL)
         username = self.driver.find_element_by_name('u')
         password = self.driver.find_element_by_name('p')
-        username.send_keys(self.testData['username'])
-        password.send_keys(self.testData['password'])
+        username.send_keys(USER)
+        password.send_keys(PASSWORD)
         self.driver.find_element_by_name('submit').send_keys(Keys.ENTER)
         element = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.ID, "sitem"))
@@ -71,15 +60,18 @@ class app:
             targetList.append(data)
 
         for target in targetList:
-            time.sleep(random.randint(1, 5))
-            self.jumpToItemPage(target)
-        self.db.endTask(self.queue[0][0],'成功')
+            # 判断是否存在
+            if self.db.isSonzai(target['itemId']) == False:
+                self.jumpToItemPage(target)
+            else :
+                print('跳过 '+str(itemId))
+        self.db.endTask(self.queue[0][0], '成功')
         self.db.close()
 
-    def jumpToItemPage(self,target):
-        # self.driver.get(self.testData['item'])
+    def jumpToItemPage(self, target):
         self.driver.get(target['itemTargetUrl'])
-        codebox = self.driver.find_element_by_id('codebox').get_attribute('value')
+        codebox = self.driver.find_element_by_id(
+            'codebox').get_attribute('value')
         data = parseCodeBox(codebox)
         target['titleUrl'] = data['titleUrl']
         target['btnUrl'] = data['btnUrl']
