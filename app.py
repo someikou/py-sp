@@ -20,10 +20,10 @@ class app:
         self.driver.implicitly_wait(10)
         self.driver.set_window_size(360, 800)
         self.testData = {
-            'loginUrl': 'https://grp02.id.rakuten.co.jp/rms/nid/vc?__event=login&service_id=p11',
-            'username': 'kousomei@yahoo.cn',
-            'password': '5917364',
-            'itemList': 'https://affiliate.rakuten.co.jp/search/?v=2&g=100026',
+            'loginUrl': '',
+            'username': '',
+            'password': '',
+            'itemList': '',
             'item': ''
         }
         time.sleep(random.randint(1, 5))
