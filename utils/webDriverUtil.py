@@ -13,7 +13,7 @@ class webDriverUtil:
             opts.binary_location = 'C:\\Program Files (x86)\\Google\Chrome Beta\\Application\\chrome.exe'
         opts.add_argument('headless') 
         # PROXY = 'scheme://user:pass@my.great.host:port'
-        PROXY = '160.16.52.185:3128'
+        PROXY = '133.167.81.162:8080'
         opts.add_argument('--proxy-server=http://%s' % PROXY)
         driver = webdriver.Chrome(chrome_options = opts)
         # driver = webdriver.Chrome()

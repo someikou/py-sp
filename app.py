@@ -30,9 +30,12 @@ class app:
         )
         self.queue = self.db.getTaskUrl()
         for i in range(7):
-            self.jumpToItemList(str(self.queue[0][1])+'&s=5&p=7'+str(i))
+            self.jumpToItemList(str(self.queue[0][1])+'&s=5&p='+str(i+1))
+        self.db.endTask(self.queue[0][0], '成功')
+        self.db.close()
 
     def jumpToItemList(self,url):
+        print(url)
         self.driver.get(url)
         itemsList = self.driver.find_elements_by_css_selector(
             'p[class="mb-2 mb-lg-3"] a')
@@ -70,8 +73,7 @@ class app:
                 self.jumpToItemPage(target)
             else :
                 print('跳过 '+str(itemId))
-        self.db.endTask(self.queue[0][0], '成功')
-        self.db.close()
+        
 
     def jumpToItemPage(self, target):
         self.driver.get(target['itemTargetUrl'])
