@@ -39,17 +39,17 @@ class dbUtil:
         return False
 
     def addItem(self,data):
-        checkSql = "select id from items where item_id = '"+str(data[0])+"'"
-        addSql = 'insert into items values ((select count(*)+1 from items),?,?,?,?,?,?,?,?,?,?,?,?,?)'
+        checkSql = "select id from items where item_id = '"+str(data[1])+"'"
+        addSql = 'insert into items values ((select count(*)+1 from items),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
         result = self.cursor.execute(checkSql).fetchall()
         if len(result) >= 1:
-            msg = '已经存在 '+str(data[0])
+            msg = '已经存在 '+str(data[1])
             print(msg)
             return False
         else:
             self.cursor.execute(addSql,data)
             msg = '添加成功 ' if self.cursor.rowcount == 1 else '添加失败 '
-            print(str(msg)+str(data[0])+': '+str(data[1]))
+            print(str(msg)+str(data[1])+': '+str(data[2]))
             return self.cursor.execute(checkSql).fetchall()[0][0]
     
     def addImg(self,imgUrl4Add,addResultItemId):
@@ -63,7 +63,7 @@ class dbUtil:
         self.cursor.execute(addSql,data)
 
     def getTaskUrl(self):
-        getSql = 'select id, url from queue where lock_flg = 0 limit 1'
+        getSql = 'select id, url, category from queue where lock_flg = 0 limit 1'
         result = self.cursor.execute(getSql).fetchall()
         lockSql = 'update queue set lock_flg = 1 where id = '+str(result[0][0])
         lockResult = self.cursor.execute(lockSql).fetchall()

@@ -28,10 +28,12 @@ class app:
         element = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.ID, "sitem"))
         )
-
-    def jumpToItemList(self):
         self.queue = self.db.getTaskUrl()
-        self.driver.get(self.queue[0][1])
+        for i in range(7):
+            self.jumpToItemList(str(self.queue[0][1])+'&s=5&p=7'+str(i))
+
+    def jumpToItemList(self,url):
+        self.driver.get(url)
         itemsList = self.driver.find_elements_by_css_selector(
             'p[class="mb-2 mb-lg-3"] a')
         href = itemsList[0].get_attribute('href')
@@ -49,13 +51,16 @@ class app:
                 'me_url=[a-zA-Z0-9_.\-%]{1,}', itemTargetUrl)[0].replace('me_url=', ''))
             shopName = re.findall(
                 'co.jp/[a-zA-Z0-9_.\-%]{1,}', itemSaleUrl)[0].replace('co.jp/', '')
+            postage = re.findall('postage_flg=[0-9]{1,}', itemTargetUrl)[0].replace('postage_flg=', '')
             data = {
                 'itemTargetUrl': itemTargetUrl,
+                'category': self.queue[0][2],
                 'itemId': itemId,
                 'title': title,
                 'price': price,
                 'shopName': shopName,
-                'itemSaleUrl': itemSaleUrl
+                'itemSaleUrl': itemSaleUrl,
+                'postage':postage,
             }
             targetList.append(data)
 
@@ -84,6 +89,7 @@ class app:
             'jump_url').get_attribute('href')
         target['shopMsg'] = self.driver.find_element_by_id('shop_blurb').text
         item4Add = [
+            target['category'],
             target['itemId'],
             target['title'],
             target['price'],
@@ -95,6 +101,7 @@ class app:
             target['shopName'],
             target['shopUrl'],
             target['shopMsg'],
+            target['postage'],
             time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
             0,
         ]

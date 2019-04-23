@@ -8,7 +8,12 @@ import platform
 # print(data['aaa'])
 
 
-db = dbUtil('./utils/afl.db')
-db.endTask(2,'seikoi2')
+# db = dbUtil('./utils/afl.db')
+# db.endTask(2,'seikoi2')
 
 # print(platform.system())
+
+
+for i in range(5):
+    target = 'XXXXX'
+    print(str(target)+str('&s=5&p=')+str(i))
