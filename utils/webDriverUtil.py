@@ -10,6 +10,7 @@ class webDriverUtil:
 
     def __init__(self,headless):
         self.counter = 1
+        
         self.opts = webdriver.ChromeOptions()
         if (platform.system() != 'Darwin'):
             self.opts.binary_location = 'C:\\Program Files (x86)\\Google\Chrome Beta\\Application\\chrome.exe'
