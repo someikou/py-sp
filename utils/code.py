@@ -2,6 +2,7 @@ LOGIN_URL = ''
 USER = ''
 PASSWORD = ''
 DB_PATH = './utils/afl.db'
+CHECK_IP = 'http://httpbin.org/get'
 
 CAT_101001 = '101001' # Tシャツ・カットソー
 CAT_101002 = '101002' # シャツ・ブラウス

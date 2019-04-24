@@ -63,12 +63,23 @@ class dbUtil:
         self.cursor.execute(addSql,data)
 
     def getTaskUrl(self):
-        getSql = 'select id, url, category from queue where lock_flg = 0 limit 1'
+        getSql = "select id, url, category from queue where lock_flg = 0 and date(upd_time) < date('now') limit 1"
         result = self.cursor.execute(getSql).fetchall()
-        lockSql = 'update queue set lock_flg = 1 where id = '+str(result[0][0])
-        lockResult = self.cursor.execute(lockSql).fetchall()
-        self.conn.commit()
-        return result
+        if len(result) >= 1:
+            prams = [
+                '开始',
+                time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                result[0][0],
+            ]
+            lockSql = 'update queue set lock_flg = 0, biko = ? , upd_time = ? where id = ?'
+            lockResult = self.cursor.execute(lockSql,prams).fetchall()
+            self.conn.commit()
+            # 有任务就返回任务信息
+            return result
+        else:
+            # 没有任务
+            return False
+        
 
     def endTask(self,targetId,biko):
         prams = [

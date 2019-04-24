@@ -14,29 +14,28 @@ from utils.dbUtil import *
 
 
 class app:
+
     def __init__(self):
-        self.driver = webDriverUtil.createWebDriver()
+        self.driverUtil = webDriverUtil(False)
+        self.driver = driverUtil.createWebDriver()
+        self.driver = webDriverUtil.createWebDriver(True)
         self.db = dbUtil(DB_PATH)
 
     def login(self):
-        self.driver.get(LOGIN_URL)
-        username = self.driver.find_element_by_name('u')
-        password = self.driver.find_element_by_name('p')
-        username.send_keys(USER)
-        password.send_keys(PASSWORD)
-        self.driver.find_element_by_name('submit').send_keys(Keys.ENTER)
-        element = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.ID, "sitem"))
-        )
         self.queue = self.db.getTaskUrl()
+        if self.queue == False:
+            return False
+        self.driverUtil.login()
         for i in range(7):
             self.jumpToItemList(str(self.queue[0][1])+'&s=5&p='+str(i+1))
         self.db.endTask(self.queue[0][0], '成功')
         self.db.close()
+        # 继续下一个任务
+        self.login()
 
     def jumpToItemList(self,url):
         print(url)
-        self.driver.get(url)
+        self.driverUtil.get(url)
         itemsList = self.driver.find_elements_by_css_selector(
             'p[class="mb-2 mb-lg-3"] a')
         href = itemsList[0].get_attribute('href')
@@ -76,7 +75,7 @@ class app:
         
 
     def jumpToItemPage(self, target):
-        self.driver.get(target['itemTargetUrl'])
+        self.driverUtil.get(target['itemTargetUrl'])
         codebox = self.driver.find_element_by_id(
             'codebox').get_attribute('value')
         data = parseCodeBox(codebox)
