@@ -1,6 +1,6 @@
-LOGIN_URL = 'https://grp02.id.rakuten.co.jp/rms/nid/vc?__event=login&service_id=p11'
-USER = 'kousomei@yahoo.cn'
-PASSWORD = '5917364'
+LOGIN_URL = ''
+USER = ''
+PASSWORD = ''
 DB_PATH = './utils/afl.db'
 CHECK_IP = 'http://httpbin.org/get'
 MAX_PAGE_NUM = 3

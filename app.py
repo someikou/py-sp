@@ -19,18 +19,22 @@ class app:
         self.driverUtil = webDriverUtil(True)
         self.driver = self.driverUtil.createWebDriver()
         self.db = dbUtil(DB_PATH)
+        self.loggedIn = False
 
     def login(self,threadName):
         self.threadName = threadName
         self.queue = self.db.getTaskUrl(threadName)
+        info(str('新建任务'+self.threadName)+str(self.queue[0][1]))
         if self.queue == False:
             return False
-        self.driverUtil.login()
+        if self.loggedIn == False: 
+            self.driverUtil.login()
+            self.loggedIn = True
         for i in range(MAX_PAGE_NUM):
             self.jumpToItemList(str(self.queue[0][1])+'&s=5&p='+str(i+1))
         self.db.endTask(self.queue[0][0], '成功',threadName)
         # 继续下一个任务
-        # self.login()
+        self.login(threadName)
         self.db.close()
 
     def jumpToItemList(self,url):
