@@ -11,35 +11,33 @@ from urllib.parse import urlparse, unquote
 import time
 import random
 from utils.dbUtil import *
-
+from utils.logUtil import *
 
 class app:
 
     def __init__(self):
-        self.driverUtil = webDriverUtil(False)
-        self.driver = driverUtil.createWebDriver()
-        self.driver = webDriverUtil.createWebDriver(True)
+        self.driverUtil = webDriverUtil(True)
+        self.driver = self.driverUtil.createWebDriver()
         self.db = dbUtil(DB_PATH)
 
-    def login(self):
-        self.queue = self.db.getTaskUrl()
+    def login(self,threadName):
+        self.threadName = threadName
+        self.queue = self.db.getTaskUrl(threadName)
         if self.queue == False:
             return False
         self.driverUtil.login()
-        for i in range(7):
+        for i in range(MAX_PAGE_NUM):
             self.jumpToItemList(str(self.queue[0][1])+'&s=5&p='+str(i+1))
-        self.db.endTask(self.queue[0][0], '成功')
-        self.db.close()
+        self.db.endTask(self.queue[0][0], '成功',threadName)
         # 继续下一个任务
-        self.login()
+        # self.login()
+        self.db.close()
 
     def jumpToItemList(self,url):
-        print(url)
+        info(str(self.threadName)+str(url))
         self.driverUtil.get(url)
         itemsList = self.driver.find_elements_by_css_selector(
             'p[class="mb-2 mb-lg-3"] a')
-        href = itemsList[0].get_attribute('href')
-        print(href)
         targetList = []
         for item in itemsList:
             itemTargetUrl = item.get_attribute('href')
@@ -71,13 +69,14 @@ class app:
             if self.db.isSonzai(target['itemId']) == False:
                 self.jumpToItemPage(target)
             else :
-                print('跳过 '+str(itemId))
-        
+                info(str(self.threadName)+'跳过 '+str(itemId))     
 
     def jumpToItemPage(self, target):
         self.driverUtil.get(target['itemTargetUrl'])
-        codebox = self.driver.find_element_by_id(
-            'codebox').get_attribute('value')
+        codeboxEle = WebDriverWait(self.driver, 5).until(
+            EC.presence_of_element_located((By.ID, 'codebox'))
+        )
+        codebox = codeboxEle.get_attribute('value')
         data = parseCodeBox(codebox)
         target['titleUrl'] = data['titleUrl']
         target['btnUrl'] = data['btnUrl']
@@ -106,7 +105,7 @@ class app:
             time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
             0,
         ]
-        addResultItemId = self.db.addItem(item4Add)
+        addResultItemId = self.db.addItem(item4Add,self.threadName)
         if (addResultItemId != False):
             for imgUrl in imgList:
                 imgUrl4Add = imgUrl.get_attribute('src')

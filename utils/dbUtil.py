@@ -1,5 +1,6 @@
 import sqlite3
 import time
+from utils.logUtil import *
 
 class dbUtil:
     
@@ -38,18 +39,17 @@ class dbUtil:
             return True
         return False
 
-    def addItem(self,data):
+    def addItem(self,data,threadName):
         checkSql = "select id from items where item_id = '"+str(data[1])+"'"
         addSql = 'insert into items values ((select count(*)+1 from items),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
         result = self.cursor.execute(checkSql).fetchall()
         if len(result) >= 1:
-            msg = '已经存在 '+str(data[1])
-            print(msg)
+            info(str(threadName) + '已经存在 ' + str(data[1]))
             return False
         else:
             self.cursor.execute(addSql,data)
             msg = '添加成功 ' if self.cursor.rowcount == 1 else '添加失败 '
-            print(str(msg)+str(data[1])+': '+str(data[2]))
+            info(str(threadName) + str(msg) + str(data[1]))
             return self.cursor.execute(checkSql).fetchall()[0][0]
     
     def addImg(self,imgUrl4Add,addResultItemId):
@@ -62,18 +62,21 @@ class dbUtil:
         addSql = 'insert into imgs values ((select count(*)+1 from imgs),?,?,?,?)'
         self.cursor.execute(addSql,data)
 
-    def getTaskUrl(self):
+    def getTaskUrl(self,threadName):
         getSql = "select id, url, category from queue where lock_flg = 0 and date(upd_time) < date('now') limit 1"
         result = self.cursor.execute(getSql).fetchall()
         if len(result) >= 1:
             prams = [
-                '开始',
+                '开始'+str(threadName),
                 time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                 result[0][0],
             ]
-            lockSql = 'update queue set lock_flg = 0, biko = ? , upd_time = ? where id = ?'
-            lockResult = self.cursor.execute(lockSql,prams).fetchall()
-            self.conn.commit()
+            lockSql = 'update queue set lock_flg = 1, biko = ? , upd_time = ? where id = ? and lock_flg = 0'
+            lockResult = self.cursor.execute(lockSql,prams).rowcount
+            if (lockResult == 1):
+                self.conn.commit()
+            else:
+                self.getTaskUrl(threadName)
             # 有任务就返回任务信息
             return result
         else:
@@ -81,9 +84,9 @@ class dbUtil:
             return False
         
 
-    def endTask(self,targetId,biko):
+    def endTask(self,targetId,biko,threadName):
         prams = [
-            biko,
+            biko+str(threadName),
             time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
             targetId,
         ]

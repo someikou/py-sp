@@ -8,12 +8,11 @@ import platform
 # print(data['titleUrl'])
 # print(data['aaa'])
 
-db = dbUtil('./utils/afl.db')
-db.endTask(2,'seikoi2')
+# db = dbUtil('./utils/afl.db')
+# db.endTask(2,'seikoi2')
 
-print(platform.system())
+# print(platform.system())
 
 driverUtil = webDriverUtil(False)
 driver = driverUtil.createWebDriver()
-driverUtil.login()
 driverUtil.get('https://tool.lu/ip/')
